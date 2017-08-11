@@ -11,8 +11,8 @@ import static org.junit.Assert.assertThat;
 public class WebPageTest {
 
     @Test
-    public void test() throws Exception {
-        final WebPage home = new WebPage(new URI("http://www.carbonbikewheels.com.au/en/"), 0);
-        assertThat(home, is(notNullValue()));
+    public void shouldCrawlUrl() throws Exception {
+        final WebPage webPage = new WebPage(new URI("http://repo1.maven.org/maven2/org/springframework/boot/spring-boot-parent"), 2);
+        assertThat(webPage, is(notNullValue()));
     }
 }

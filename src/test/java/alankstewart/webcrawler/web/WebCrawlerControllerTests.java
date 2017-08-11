@@ -20,11 +20,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 /**
  * Tests for {@link WebCrawlerController}.
- * <p>
- * Note that for HttpMethod.PATCH requests, RestTemplate requires the HttpComponentsClientHttpRequestFactory, ie
- * <br>
- * private RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
- * </p>
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WebCrawlerApplication.class, webEnvironment = RANDOM_PORT)
@@ -35,15 +30,28 @@ public class WebCrawlerControllerTests {
 
     @Test
     public void shouldCrawlUrlWithDefaultDepth() throws Exception {
-        URL url = new URL("http://qantas.com");
+        URL url = new URL("http://repo1.maven.org/maven2/org/springframework/boot/spring-boot-parent");
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString("/webcrawler/crawl")
-                .queryParam("url", url)
-                .queryParam("depth", 1);
+                .queryParam("url", url);
 
         ResponseEntity<WebPage> response = restTemplate.getForEntity(builder.toUriString(), WebPage.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         WebPage webPage = response.getBody();
         assertThat(webPage.getChildren(), hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldCrawlUrlWithDepthSpecified() throws Exception {
+        URL url = new URL("http://repo1.maven.org/maven2/org/springframework/boot/spring-boot-parent");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString("/webcrawler/crawl")
+                .queryParam("url", url)
+                .queryParam("depth", 0);
+
+        ResponseEntity<WebPage> response = restTemplate.getForEntity(builder.toUriString(), WebPage.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        WebPage webPage = response.getBody();
+        assertThat(webPage.getChildren(), hasSize(equalTo(0)));
     }
 }

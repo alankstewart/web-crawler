@@ -10,3 +10,6 @@ The endpoint `/webcrawler/crawl` requires a `url` and a `depth` parameter. For e
 curl -H "Content-Type: application/json" -X GET "http://localhost:8080/webcrawler/crawl?url=https://www.qantas.com&depth=1"
 
 ```
+### Known Issues
+
+-   There appears to be a Jackson infinite recursion problem with some web sites when serializing to JSON.
