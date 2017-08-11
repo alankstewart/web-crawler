@@ -1,20 +1,20 @@
 package alankstewart.webcrawler.web;
 
 import alankstewart.webcrawler.WebCrawlerApplication;
-import alankstewart.webcrawler.domain.WebNode;
+import alankstewart.webcrawler.service.WebPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -35,13 +35,15 @@ public class WebCrawlerControllerTests {
 
     @Test
     public void shouldCrawlUrlWithDefaultDepth() throws Exception {
+        URL url = new URL("http://qantas.com");
         UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString("/webcrawler/search")
-                .queryParam("url", new URL("https://google.com"))
-                .queryParam("depth", 5);
-        ResponseEntity<WebNode> response = restTemplate.getForEntity(builder.toUriString(), WebNode.class);
-        WebNode body = response.getBody();
-        assertThat(body, is(notNullValue()));
-        assertThat(body.url(), is("https://google.com"));
+                .fromUriString("/webcrawler/crawl")
+                .queryParam("url", url)
+                .queryParam("depth", 1);
+
+        ResponseEntity<WebPage> response = restTemplate.getForEntity(builder.toUriString(), WebPage.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        WebPage webPage = response.getBody();
+        assertThat(webPage.getChildren(), hasSize(greaterThan(0)));
     }
 }

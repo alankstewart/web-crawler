@@ -1,7 +1,7 @@
 package alankstewart.webcrawler.web;
 
-import alankstewart.webcrawler.domain.WebNode;
 import alankstewart.webcrawler.service.WebCrawlerService;
+import alankstewart.webcrawler.service.WebPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +22,8 @@ public class WebCrawlerController {
         this.webCrawlerService = webCrawlerService;
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<WebNode> search(@RequestParam URL url, @RequestParam(defaultValue = "10") int depth) throws Exception {
-        return ResponseEntity.ok(webCrawlerService.search(url, depth));
+    @GetMapping("/crawl")
+    public ResponseEntity<WebPage> search(@RequestParam URL url, @RequestParam(defaultValue = "1") int depth) throws Exception {
+        return ResponseEntity.ok(new WebPage(url.toURI(), depth));
     }
 }
